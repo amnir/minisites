@@ -1,2 +1,5 @@
+# Pages are intentionally crawlable so compliant search engines can read the
+# page-level noindex directives. Do not block these URLs here, otherwise a URL
+# can still appear in search results without its contents being crawled.
 User-agent: *
-Disallow: /minisites/galilion-2026/
+Allow: /
