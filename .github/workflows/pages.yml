@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -49,6 +49,19 @@ jobs:
               raise SystemExit(f'road section replacement count was {n}')
           p.write_text(text, encoding='utf-8')
           PY
+
+      - name: Persist generated dashboard source
+        shell: bash
+        run: |
+          if git diff --quiet -- galilion-2026/index.html; then
+            echo "Dashboard already up to date"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add galilion-2026/index.html
+            git commit -m "Add graphical road-stop timelines"
+            git push
+          fi
 
       - name: Configure Pages
         uses: actions/configure-pages@v6
