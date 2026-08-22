@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -23,6 +23,55 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
+      - name: Add lunch plan to Galilion dashboard
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('galilion-2026/index.html')
+          text = p.read_text(encoding='utf-8')
+
+          if 'id="lunch"' not in text:
+              marker = '<div class="sec" id="road">'
+              lunch = '''<div class="sec" id="lunch"><h2>מה אוכלים בצהריים? 🍽️</h2><span>בלי להסתבך כל יום</span></div><p style="font-size:11px;line-height:1.55;margin:0 3px 10px;color:var(--mut)">האסטרטגיה: 2 ארוחות מסעדה נחמדות, 1–2 צהריים מהירים במלון/אגמון מרקט, ופעם אחת כריכים. כך לא נתקעים רעבים אבל גם לא בונים את כל היום סביב מסעדה.</p><div class="bank">
+<div class="place"><div class="placehead"><h3>🏨 מה יש במלון בצהריים?</h3><span>הכי קל אחרי טיול</span></div><p>שקנאי/פרנקולין לא מגישות ארוחת צהריים רגילה לאורחים בודדים. בר הבריכה <b>GalilON The Water</b> כן מגיש נשנושים וארוחות צהריים מהירות. זה Plan A טוב כשחוזרים עייפים.</p><div class="actions"><a class="btn primary" target="_blank" rel="noopener" href="https://galilion.co.il/culinary/">🔗 מידע רשמי</a></div></div>
+<div class="place"><div class="placehead"><h3>🥪 כריכים מהחדר</h3><span>Plan B מצוין לטיולים</span></div><p>בחדרים יש מיני מקרר, אז אפשר להביא/לקנות לחם, גבינות, ירקות, פירות וחטיפים ולהכין בבוקר. עדיף לא לבנות על לקחת אוכל מבופה ארוחת הבוקר בלי אישור מפורש מהמלון.</p><div class="chips"><span class="chip">🧊 מיני מקרר</span><span class="chip">🎒 טוב לתל דן/שניר</span></div><div class="actions"><a class="btn" target="_blank" rel="noopener" href="https://galilion.co.il/rooms/">🔗 אבזור החדרים</a></div></div>
+<div class="place"><div class="placehead"><h3>א׳ · יום ההגעה</h3><span>גמיש לפי שעת היציאה</span></div><p>אם יוצאים מחולון סביב הבוקר המאוחר — אוכלים בדרך באחת מעצירות ההתרעננות. אם מגיעים כבר לאזור המלון: אגמון מרקט הצמוד או ארוחה מהירה בבר הבריכה אחרי הצ׳ק־אין.</p><div class="actions"><a class="btn" target="_blank" rel="noopener" href="https://galilion.co.il/facilities/">🔗 אגמון מרקט / מתקני המלון</a></div></div>
+<div class="place"><div class="placehead"><h3>ב׳ · אחרי תל דן</h3><span>ארוחת המסעדה של הטיול</span></div><p><b>דג על הדן</b> הוא שילוב טבעי אחרי תל דן: מסעדה על המים, פתוחה א׳–ה׳ 12:00–20:00. אם הילדים גמורים — כריכים וחזרה ישר למלון.</p><div class="actions"><a class="btn primary" target="_blank" rel="noopener" href="https://www.dagaldan.co.il/restaurant">🔗 אתר רשמי</a><a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Dag%20Al%20HaDan">📍 מפה</a></div></div>
+<div class="place"><div class="placehead"><h3>ג׳ · אגמון החולה</h3><span>אפס לוגיסטיקה</span></div><p>אוכלים ב<b>אגמון מרקט</b> הצמוד לאגמון ולמלון, או חוזרים לבר הבריכה. המלון מפרסם כרגע את המרקט א׳–ה׳ 10:00–18:00; שווה לוודא בקבלה באותו יום.</p><div class="actions"><a class="btn primary" target="_blank" rel="noopener" href="https://galilion.co.il/facilities/">🔗 שעות עדכניות במלון</a><a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Agamon%20Market">📍 מפה</a></div></div>
+<div class="place"><div class="placehead"><h3>ד׳ · אחרי נחל שניר</h3><span>יום הכריכים</span></div><p>הייתי עושה כאן <b>כריכים + פירות</b> מיד בסיום הטיול וחוזר למנוחה. אם ויתרנו על דג על הדן ביום ב׳, אפשר להעביר אותו לכאן במקום.</p><div class="chips"><span class="chip">🥪 הכי מהיר</span><span class="chip">😴 חוזרים מוקדם למנוחה</span></div></div>
+<div class="place"><div class="placehead"><h3>ה׳ · בדרך הביתה</h3><span>צהריים לפני הנסיעה הארוכה</span></div><p>אחרי הפעילות האחרונה, עוצרים ב<b>ג׳ויה ראש פינה</b>: איטלקית חלבית כשרה, פתוחה ביום ה׳ מ־12:00. זו עצירה נוחה לפני שמתחילים את הדרך לרמת גן.</p><div class="actions"><a class="btn primary" target="_blank" rel="noopener" href="https://joya.co.il/%D7%92%D7%95%D7%99%D7%94-%D7%A8%D7%90%D7%A9-%D7%A4%D7%99%D7%A0%D7%94/">🔗 אתר רשמי</a><a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Joya%20Rosh%20Pina">📍 מפה</a></div></div>
+</div>'''
+              text = text.replace(marker, lunch + marker, 1)
+
+          replacements = {
+            '14:00|הגעה והתארגנות|צהריים קלים וצ׳ק־אין.|hotel,low;': '12:30|צהריים בדרך / ליד המלון|לפי שעת היציאה: עצירת הדרך, אגמון מרקט או בר הבריכה.|low;14:00|הגעה והתארגנות|צ׳ק־אין ונכנסים לקצב.|hotel,low;',
+            '12:30|חזרה · אוכל · מנוחה|זמן חדר אמיתי.|hotel,low;': '12:00|צהריים: דג על הדן / כריכים|אם יש כוח למסעדה — דג על הדן; אחרת כריכים וחזרה.|low;13:30|חזרה · מנוחה|זמן חדר אמיתי.|hotel,low;',
+            '11:00|בריכה / מרכז המבקרים|לפי האנרגיה.|water,indoor;14:00|מנוחה בחדר|שומרים כוח.|hotel,low;': '11:00|בריכה / מרכז המבקרים|לפי האנרגיה.|water,indoor;12:00|צהריים: אגמון מרקט / בר הבריכה|הכי קרוב והכי פשוט ביום הזה.|low;14:00|מנוחה בחדר|שומרים כוח.|hotel,low;',
+            '12:00|חזרה · אוכל · מנוחה|לא למשוך לחום.|hotel,low;': '11:45|צהריים: כריכים / דג על הדן|Plan A כריכים ופירות; דג על הדן אם דילגנו עליו ביום ב׳.|low;13:00|חזרה · מנוחה|לא למשוך לחום.|hotel,low;',
+            '11:30|בית אוסישקין / אגמון|אם חם – מקורה.|indoor,low': '11:30|בית אוסישקין / אגמון|אם חם – מקורה.|indoor,low;13:00|צהריים בג׳ויה ראש פינה|ארוחה מסודרת לפני הדרך לרמת גן.|low'
+          }
+          for old, new in replacements.items():
+              if old in text:
+                  text = text.replace(old, new, 1)
+
+          p.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Persist lunch plan
+        shell: bash
+        run: |
+          if git diff --quiet -- galilion-2026/index.html; then
+            echo "Dashboard already up to date"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add galilion-2026/index.html
+            git commit -m "Add daily lunch plan"
+            git push
+          fi
 
       - name: Configure Pages
         uses: actions/configure-pages@v6
